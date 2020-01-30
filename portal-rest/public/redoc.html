@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ReDoc</title>
+    <!-- needed for adaptive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--
+    ReDoc doesn't change outer page styles
+    -->
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+	<redoc></redoc>
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g=" crossorigin="anonymous"></script>
+	<script src="https://rebilly.github.io/ReDoc/releases/latest/redoc.min.js"> </script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.4/jszip.min.js"> </script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip-utils/0.0.2/jszip-utils.js"></script>
+  </body>
+  
+  <script>
+  
+	$(function () {
+		var params = new URLSearchParams(window.location.search);	
+		var specOrSpecUrl;
+		if (params.get("url")){
+			specOrSpecUrl = params.get("url");
+			Redoc.init(specOrSpecUrl, {scrollYOffset: 50});
+		} else if (params.get("zip")){
+			console.log("Loading zip from :" + params.get("zip"));
+			var swaggerInFile = "swagger.json";
+			if (params.get("file")){
+				swaggerInFile = params.get("file");
+			}
+			console.log("Loading swagger from :" + swaggerInFile + " file inside zip");
+			JSZipUtils.getBinaryContent(params.get("zip"), function(err, binaryContent) {
+				if(err) {
+					throw err; // or handle err
+				}
+				console.log('Binary content (zip) is read from remote location');
+				JSZip.loadAsync(binaryContent).then(function (zip) {
+					console.log('ZIP is decoded');
+					zip.file(swaggerInFile).async("text")
+					.then(function (txt) {
+						console.log('swagger.json is read');
+						console.log(txt);
+						Redoc.init(JSON.parse(txt), {scrollYOffset: 50});
+					});
+				});
+			});
+		}
+	});
+  
+  </script>
+</html>

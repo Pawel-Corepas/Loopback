@@ -1,0 +1,10 @@
+{
+  "name": "portalDB",
+  "connector": "mysql",
+  "url": "mysql://portal:portal@127.0.0.1:3306/portal",
+  "host": "127.0.0.1",
+  "port": 3306,
+  "user": "portal",
+  "password": "portal",
+  "database": "portal"
+}
